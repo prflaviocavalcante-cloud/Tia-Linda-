@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tia Linda Delivery</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  
+  <header class="header">
+    <img src="img/logo.png" class="logo" alt="Tia Linda Delivery">
+    
+    <div class="horario">
+      ⏰ Aberto das 11h às 22h
+      <div id="status-loja" class="status"></div>
+    </div>
+  </header>
+  
+  <nav class="abas">
+    <button class="aba ativa" onclick="mostrar('cuscuz', this)">🌽 Cuscuz</button>
+    <button class="aba" onclick="mostrar('pastel', this)">🥟 Pastel</button>
+    <button class="aba" onclick="mostrar('bebidas', this)">🥤 Bebidas</button>
+  </nav>
+  
+  <section id="cuscuz">
+    <div id="lista-cuscuz"></div>
+  </section>
+  
+  <section id="pastel" style="display:none">
+    <div id="lista-pastel"></div>
+  </section>
+  
+  <section id="adicionais" style="display:none">
+    <div id="lista-adicionais"></div>
+  </section>
+  
+  <section id="bebidas" style="display:none">
+    <div id="lista-bebidas"></div>
+  </section>
+  
+  <div class="carrinho-flutuante" onclick="abrirCarrinho()">
+    🛒 Carrinho
+    <span class="badge" id="qtd-itens">0</span>
+  </div>
+  
+  <!-- MODAL ADICIONAIS -->
+  <div id="modalAdicionais" class="modal-app" style="display: none;">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="tituloProduto"></h3>
+        <button onclick="fecharModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="listaAdicionais"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnConfirmar" onclick="confirmarAdicionais()">
+          Adicionar ao Carrinho • R$ 0,00
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CARRINHO -->
+  <div id="modalCarrinho" class="modal-app" style="display:none;">
+    <div class="modal-container">
+      
+      <div class="modal-header">
+        <h3>🛒 Seu Carrinho</h3>
+        <button onclick="fecharCarrinho()">✕</button>
+      </div>
+      
+      <div class="modal-body" id="itensCarrinho"></div>
+      
+      <div class="modal-footer">
+        <h4 id="totalCarrinho">Total: R$ 0,00</h4>
+        <button onclick="finalizarPedido()">Finalizar Pedido</button>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- MODAL FINALIZAÇÃO -->
+<div id="modalFinalizacao" class="modal-app" style="display:none;">
+  <div class="modal-container">
+    
+    <div class="modal-header">
+      <h3>📋 Finalizar Pedido</h3>
+      <button onclick="fecharFinalizacao()">✕</button>
+    </div>
+    
+    <div class="modal-body">
+      
+      <input type="text" id="nomeCliente" placeholder="Seu nome" required>
+      <input type="tel" id="telefoneCliente" placeholder="Seu telefone" required>
+      <input type="text" id="enderecoCliente" placeholder="Endereço de entrega" required>
+      
+      <select id="pagamentoCliente">
+        <option value="">Forma de pagamento</option>
+        <option>Pix</option>
+        <option>Cartão</option>
+        <option>Dinheiro</option>
+      </select>
+      
+      <textarea id="observacoesCliente" placeholder="Observações (ex: sem verduras)"></textarea>
+      
+    </div>
+    
+    <div class="modal-footer">
+      <button onclick="enviarPedidoWhatsApp()">Enviar Pedido</button>
+    </div>
+    
+  </div>
+</div>
+
+<!-- TELA SUCESSO PEDIDO -->
+<div id="modalSucesso" class="modal-app" style="display:none;">
+  <div class="modal-container" style="justify-content:center; align-items:center; text-align:center; padding:30px;">
+    
+    <div style="font-size:60px;">✅</div>
+    
+    <h2 style="margin-top:15px;">Pedido Enviado!</h2>
+    
+    <p style="margin-top:10px; color:#666;">
+      Seu pedido foi enviado com sucesso.<br>
+      Estamos preparando tudo com carinho ❤️
+    </p>
+    
+    <button onclick="irParaWhatsApp()" style="
+      margin-top:25px;
+      padding:14px;
+      width:100%;
+      border:none;
+      border-radius:12px;
+      background:#25D366;
+      color:white;
+      font-weight:bold;
+      font-size:16px;
+      cursor:pointer;">
+      Falar no WhatsApp
+    </button>
+    
+  </div>
+  <div id="debugCategorias" style="
+background:#000;
+color:#0f0;
+padding:10px;
+font-size:12px;
+max-height:150px;
+overflow:auto;">
+</div>
+</div>
+<!-- MODAL STATUS PEDIDO -->
+<div id="modalStatus" class="modal-app" style="display:none;">
+  <div class="modal-container" style="text-align:center;padding:25px;">
+    
+    <h2>📦 Acompanhe seu Pedido</h2>
+    <p style="color:#666;margin-bottom:20px;">
+      Estamos preparando tudo com carinho ❤️
+    </p>
+    
+    <div id="linhaStatus">
+      
+      <div class="status-item ativo" id="status-recebido">
+        ✅ Pedido Recebido
+      </div>
+      
+      <div class="status-item" id="status-andamento">
+        👨‍🍳 Em Andamento
+      </div>
+      
+      <div class="status-item" id="status-enviado">
+        🚚 Pedido Enviado
+      </div>
+      
+    </div>
+    
+    <button onclick="fecharStatus()" style="margin-top:20px;">
+      Fechar
+    </button>
+    
+  </div>
+</div>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="script.js"></script>
+  
+</body>
+</html>

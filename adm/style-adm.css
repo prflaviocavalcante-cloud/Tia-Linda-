@@ -1,0 +1,427 @@
+/* ============================================================
+   ESTILOS GERAIS (RESET E BODY)
+   ============================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #0f172a;
+  /* Remova o display: flex e o justify-content: center daqui se eles existirem */
+}
+
+/* ============================================================
+   TELA DE LOGIN (AUTH-CARD)
+   ============================================================ */
+.auth-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card {
+  background: #1f2937;
+  padding: 40px;
+  border-radius: 12px;
+  width: 350px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  max-height: 90vh; 
+  overflow-y: auto;
+}
+
+.auth-card h2 {
+  color: #fff;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+/* ============================================================
+   ELEMENTOS DE FORMULÁRIO (INPUTS E BOTÕES)
+   ============================================================ */
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 6px;
+  background: #374151;
+  color: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #22c55e;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #16a34a;
+}
+
+.link {
+  text-align: center;
+  margin-top: 15px;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* ============================================================
+   LAYOUT PRINCIPAL DO PAINEL (EXPANSÃO TOTAL)
+   ============================================================ */
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw; /* Usa a largura total da tela */
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 260px; /* Aumentei um pouco para ícones mais visíveis */
+  background: #111827;
+  padding: 25px;
+  color: white;
+  border-right: 1px solid #1f2937;
+}
+
+.logo {
+  margin-bottom: 35px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 15px; /* Mais espaço de clique */
+  margin-bottom: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+}
+
+.sidebar li:hover {
+  background: #1f2937;
+  color: #22c55e; /* Destaque verde ao passar o mouse */
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0f172a;
+  width: 100%; 
+}
+
+.topbar {
+  background: #1e293b;
+  padding: 18px 25px;
+  color: white;
+  border-bottom: 1px solid #334155;
+}
+
+/* ============================================================
+   CONTEÚDO DO PDV (SISTEMA DE COLUNAS LADO A LADO)
+   ============================================================ */
+/* Container principal - Removemos o grid fixo daqui */
+.conteudo {
+  padding: 25px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ajuste para a Grade de Pedidos (Apenas para a lista de pedidos) */
+#lista-pedidos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 400px)); /* Limita a largura máxima do card */
+  justify-content: center; /* Centraliza a grid se sobrar espaço */
+}
+
+/* Estilo do Card (Universal) */
+.card {
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 12px;
+  color: white;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  height: fit-content; 
+  width: 100%; /* Agora o card pode ocupar a largura toda se necessário */
+  overflow-x: auto; /* Adiciona rolagem se a tabela for maior que a tela */
+}
+
+/* Estilo para tabelas dentro de cards */
+.card table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px; /* Garante que as colunas não se apertem */
+}
+
+.card th, .card td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #334155;
+}
+
+/* ============================================================
+   ESTILO DO MODAL ADM - TAMANHO AMPLIADO (NOVO)
+   ============================================================ */
+.modal-adm {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85); /* Fundo escuro atrás */
+  display: none; /* Ativado via JS: .style.display = 'flex' */
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal-adm-conteudo {
+  background: #1e293b; /* Cor combinando com o painel */
+  color: white;
+  width: 95%; 
+  max-width: 1000px;    /* LARGURA DOBRADA (Era 500px) */
+  min-height: 400px;
+  max-height: 85vh;    /* Não deixa o modal sumir para baixo */
+  padding: 30px;
+  border-radius: 16px;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;    /* Rolagem se o formulário for grande */
+  border: 1px solid #334155;
+}
+
+/* Títulos dentro do Modal */
+.modal-adm-conteudo h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 10px;
+}
+/* ============================================================
+   ESTILOS DO CABEÇALHO DO CARD (PDV PROFISSIONAL)
+   ============================================================ */
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Cores dinâmicas para o Status */
+.status-recebido { background: #1e3a8a; color: #93c5fd; } /* Azul */
+.status-preparo { background: #78350f; color: #fcd34d; }  /* Laranja */
+.status-entrega { background: #064e3b; color: #6ee7b7; }  /* Verde */
+
+.tempo-espera {
+    font-size: 13px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Alerta de atraso: fica vermelho se passar de 30 min */
+.tempo-alerta {
+    color: #f87171;
+    font-weight: bold;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.5; }
+}
+
+.valor-total-card {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #22c55e;
+}
+/* Faz o nome do produto não "embolar" */
+.card td strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+    white-space: normal; /* Permite quebrar linha se o nome for gigante, mas com elegância */
+}
+/* ============================================================
+   ESTILOS DA ABA DE VENDAS (RESUMO FINANCEIRO)
+   ============================================================ */
+.resumo-vendas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card-financeiro {
+    padding: 20px;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.bg-faturamento { background: linear-gradient(135deg, #065f46, #059669); }
+.bg-lucro { background: linear-gradient(135deg, #1e40af, #3b82f6); }
+.bg-pedidos { background: linear-gradient(135deg, #92400e, #d97706); }
+
+.card-financeiro h3 { font-size: 14px; opacity: 0.9; margin-bottom: 10px; }
+.card-financeiro p { font-size: 24px; font-weight: bold; }
+/* Área de visualização da nota */
+#modal-impressao {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 9999;
+}
+.nota-papel {
+  background: white;
+  color: black;
+  width: 300px;
+  padding: 20px;
+  font-family: 'Courier New', monospace;
+  border-bottom: 5px dotted #ccc;
+  /* Efeito de recorte de papel */
+}
+.controles-impressao {
+    display: flex; gap: 10px; margin-top: 15px;
+}
+.btn-print { background: #22c55e; color: white; border: none; padding: 10px; flex: 1; cursor: pointer; border-radius: 5px; font-weight: bold; }
+.btn-cancel { background: #ef4444; color: white; border: none; padding: 10px; flex: 1; cursor: pointer; border-radius: 5px; font-weight: bold; }
+
+/* Esconde tudo na hora de imprimir, exceto a nota */
+@media print {
+    body * { visibility: hidden; }
+    #modal-impressao, #modal-impressao *, .nota-papel, .nota-papel * { visibility: visible; }
+    #modal-impressao { position: absolute; left: 0; top: 0; background: white; }
+    .controles-impressao { display: none; }
+}
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 10px;
+    }
+    .sidebar .logo, .sidebar li span {
+        display: none; /* Esconde o texto, deixa só os ícones/emojis */
+    }
+    .sidebar li {
+        justify-content: center;
+    }
+    .resumo-vendas {
+        grid-template-columns: 1fr; /* Empilha os cards financeiros */
+    }
+}
+/* ============================================================
+   ALTERAÇÕES SOLICITADAS: PDV E JANELA DE EDIÇÃO
+   ============================================================ */
+
+/* 1. Diminuir o espaço entre os produtos na tabela */
+.card th, .card td {
+  padding: 8px 15px; /* Reduzido de 15px para 8px na vertical */
+  text-align: left;
+  border-bottom: 1px solid #334155;
+  vertical-align: middle;
+}
+
+/* 2. Botões Editar e Excluir em linha horizontal com o Status */
+/* Nota: Aplica-se à célula que contém o status e os botões */
+.card td {
+  white-space: nowrap; /* Evita que os botões quebrem linha */
+}
+
+/* Garante que o container de ações/status use Flexbox */
+.card td div, 
+.card td:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px; /* Espaço entre Status, Editar e Excluir */
+}
+
+/* Ajuste nos ícones/botões de ação para não ficarem gigantes */
+.card td img, 
+.card td button {
+  margin: 0;
+  cursor: pointer;
+  display: inline-block;
+  width: auto; /* Impede que botões de ícone ocupem 100% */
+}
+
+/* ============================================================
+   CORREÇÃO DA JANELA DE EDIÇÃO E ALINHAMENTO
+   ============================================================ */
+
+/* 1. Faz a janela de edição aparecer centralizada na frente de tudo */
+/* Tentei cercar pelos seletores mais comuns de formulários de edição */
+div[style*="display: block"], 
+.card form,
+#form-editar { 
+    /* Esta regra força qualquer div que o JS tente mostrar a virar um modal */
+    if (this.title == "Editar Produto") { } 
+}
+
+/* Aplique este bloco abaixo especificamente para a div que contém o formulário de edição */
+.auth-card, [class*="editar"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 10001 !important;
+    background: #1e293b !important;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9) !important;
+    border: 1px solid #22c55e !important;
+    display: block; /* Garante visibilidade ao ser chamado */
+}
+
+/* 2. Garante que os botões fiquem na horizontal (Lado a lado) */
+.card td:last-child {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px !important;
+    white-space: nowrap !important;
+}
+
+/* Ajuste nos botões de Editar/Excluir para não ocuparem a largura total */
+.card td button, 
+.card td .btn-acao {
+    width: auto !important;
+    padding: 5px 10px !important;
+    margin: 0 !important;
+}
