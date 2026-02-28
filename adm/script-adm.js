@@ -245,6 +245,9 @@ window.abrirModalProduto = async function(id = null) {
         
         // ✅ AQUI ESTÁ A CORREÇÃO DA ORDEM
         document.getElementById('p-ordem').value = p.ordem || 0;
+    
+        // ✅ IMAGEM DO PRODUTO
+        document.getElementById('p-imagem-link').value = p.imagem || "";
         
     } else {
         // Novo produto
@@ -273,6 +276,10 @@ document.getElementById('btn-salvar-produto').onclick = async () => {
         categoria: document.getElementById('p-tipo-select').value,
         descricao: document.getElementById('p-descricao').value || "",
         ordem: Number(document.getElementById('p-ordem').value) || 0,
+        
+        // ✅ agora cada produto tem sua própria imagem
+        imagem: document.getElementById('p-imagem-link').value || "",
+        
         timestamp: serverTimestamp()
     };
     
@@ -378,20 +385,32 @@ window.renderizarVendasCaixa = () => {
 // ================= 7. CATEGORIAS =================
 window.renderizarGerenciarCategorias = () => {
     const area = document.getElementById("area-trabalho");
-    area.innerHTML = `<div class="card" style="max-width: 500px; margin: 0 auto;"><h3 style="color:white;">Pastas</h3><div style="display:flex; gap:10px; margin: 20px 0;"><input type="text" id="cat-nome-input" placeholder="Nova pasta..."><button id="btn-add-cat">+</button></div><div id="lista-categorias-adm"></div></div>`;
+    area.innerHTML = `
+    <div class="card" style="max-width: 500px; margin: 0 auto;">
+        <h3 style="color:white;">Pastas</h3>
+        <div style="display:flex; gap:10px; margin: 20px 0;">
+            <input type="text" id="cat-nome-input" placeholder="Nova pasta...">
+            <button id="btn-add-cat" class="btn-sucesso" type="button">Adicionar</button>
+        </div>
+        <div id="lista-categorias-adm"></div>
+    </div>`;
+    
     document.getElementById('btn-add-cat').onclick = async () => {
         const nome = document.getElementById('cat-nome-input').value;
-        if(nome) await addDoc(collection(db, "categorias"), { nome });
+        if (nome) await addDoc(collection(db, "categorias"), { nome });
         document.getElementById('cat-nome-input').value = "";
     };
+    
     onSnapshot(collection(db, "categorias"), (snapshot) => {
         const lista = document.getElementById('lista-categorias-adm');
-        if(!lista) return;
+        if (!lista) return;
         lista.innerHTML = "";
         snapshot.forEach(d => {
             const item = document.createElement('div');
             item.style = "display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #334155; color:white;";
-            item.innerHTML = `<span>📁 ${d.data().nome}</span><button onclick="window.excluirCategoria('${d.id}')" style="background:none; border:none; cursor:pointer;">🗑️</button>`;
+            item.innerHTML = `
+                <span>📁 ${d.data().nome}</span>
+                <button onclick="window.excluirCategoria('${d.id}')" style="background:none; border:none; cursor:pointer;">🗑️</button>`;
             lista.appendChild(item);
         });
     });

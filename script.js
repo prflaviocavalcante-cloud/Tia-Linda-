@@ -10,11 +10,12 @@ import {
     query,
     orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 /* ======================================
    VARIÁVEIS GLOBAIS
 ====================================== */
 
-let produtos = []; // ← AGORA EXISTE
+let produtos = []; 
 let carrinho = [];
 let produtoSelecionado = null;
 let adicionaisSelecionados = [];
@@ -94,11 +95,10 @@ function mostrarPrimeiraCategoria() {
 }
 
 /* ======================================
-   CARREGAR PRODUTOS
+   CARREGAR PRODUTOS (CORRIGIDO)
 ====================================== */
 
 function carregarProdutos(listaProdutos) {
-    
     const categorias = ["cuscuz", "pastel", "bebidas"];
     
     categorias.forEach(cat => {
@@ -107,82 +107,83 @@ function carregarProdutos(listaProdutos) {
     });
     
     listaProdutos.forEach(prod => {
-        
-        let categoriaDestino = prod.categoria
-            ?.normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-            .trim();
+        let categoriaDestino = prod.categoria?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
         
         if (!categoriaDestino) return;
-        
-        // força mapeamento
         if (categoriaDestino.includes("cuscuz")) categoriaDestino = "cuscuz";
         if (categoriaDestino.includes("past")) categoriaDestino = "pastel";
         if (categoriaDestino.includes("beb")) categoriaDestino = "bebidas";
         
         const container = document.getElementById(`lista-${categoriaDestino}`);
-        
         if (!container) return;
         
         const card = document.createElement("div");
-        card.className = "card-produto";
+card.className = "card-produto";
+
+if (categoriaDestino === "bebidas") {
+    card.classList.add("sem-moldura");
+}
         
+        // CORREÇÃO: Removida a div extra que causava moldura duplicada e erros de posição
         card.innerHTML = `
             <div class="card-info">
-                <h3>${prod.nome}</h3>
-                <p>Categoria: ${prod.categoria}</p>
-                <p class="preco">R$ ${Number(prod.preco || 0).toFixed(2)}</p>
-                <button onclick="adicionarProduto('${prod.id}')">Adicionar</button>
+              <h3>${prod.nome}</h3>
+              <p style="font-size:12px;color:#666;">${prod.categoria}</p>
+
+              <p class="descricao">
+                ${prod.descricao || ""}
+              </p>
+
+              <p class="preco">
+                R$ ${Number(prod.preco || 0).toFixed(2)}
+              </p>
+
+              <button onclick="adicionarProduto('${prod.id}')">
+                Adicionar
+              </button>
             </div>
+
+            <img src="${prod.imagem || 'https://via.placeholder.com/150'}"
+                 onerror="this.src='https://via.placeholder.com/150'">
         `;
         
-        container.appendChild(card);
+       container.appendChild(card);
     });
-}/* ======================================
-   ADICIONAR PRODUTO
+}
+
+/* ======================================
+   RESTANTE DO CÓDIGO (CARRINHO, MODAL, ETC)
 ====================================== */
 
 window.adicionarProduto = function(id) {
-
     const produto = produtos.find(p => p.id === id);
     if (!produto) return;
 
     if (produto.categoria === "bebidas") {
-
         carrinho.push({
             nome: produto.nome,
             preco: produto.preco,
             qtd: 1,
             adicionais: []
         });
-
         atualizarCarrinho();
         atualizarBadge();
-
     } else {
         abrirModalAdicionais(produto);
     }
 };
 
-/* ======================================
-   MODAL ADICIONAIS
-====================================== */
-
 window.abrirModalAdicionais = function(produto) {
-    
     try {
-        
         if (!produto) {
             alert("Erro ao abrir produto.");
             return;
         }
-        
         if (!produtos || !Array.isArray(produtos)) {
             alert("Produtos ainda não carregados.");
             return;
         }
-        
+        produtoSelecionado = null;
         produtoSelecionado = produto;
         adicionaisSelecionados = [];
         valorAtualProduto = parseFloat(produto.preco) || 0;
@@ -205,18 +206,12 @@ window.abrirModalAdicionais = function(produto) {
             p.ativo === true
         );
         
-        console.log("Adicionais encontrados:", adicionais);
-        
         if (adicionais.length === 0) {
             lista.innerHTML = "<p>Nenhum adicional disponível.</p>";
         } else {
-            
             produtoSelecionado.adicionaisGlobais = adicionais;
-            
             adicionais.forEach((adicional, index) => {
-                
                 const item = document.createElement("div");
-                
                 item.innerHTML = `
                     <label style="display:flex;justify-content:space-between;padding:8px 0;">
                         <div>
@@ -228,58 +223,40 @@ window.abrirModalAdicionais = function(produto) {
                         </div>
                     </label>
                 `;
-                
                 lista.appendChild(item);
             });
         }
-        
         atualizarBotaoConfirmar();
         modal.style.display = "flex";
-        
     } catch (erro) {
         console.error("Erro ao abrir modal:", erro);
         alert("Erro ao abrir adicionais. Veja o console.");
     }
 };
 
-
-/* ======================================
-   FECHAR MODAL ADICIONAIS
-====================================== */
-
 window.fecharModal = function() {
     const modal = document.getElementById("modalAdicionais");
     if (modal) modal.style.display = "none";
-    
     produtoSelecionado = null;
     adicionaisSelecionados = [];
     valorAtualProduto = 0;
 };
-/* ======================================
-   CARRINHO
-====================================== */
 
 function atualizarBadge() {
     const badge = document.getElementById("qtd-itens");
-    badge.innerText = carrinho.reduce((s, i) => s + i.qtd, 0);
+    if (badge) badge.innerText = carrinho.reduce((s, i) => s + i.qtd, 0);
 }
 
 function atualizarCarrinho() {
-
     const lista = document.getElementById("itensCarrinho");
     const totalEl = document.getElementById("totalCarrinho");
-
+    if (!lista) return;
     lista.innerHTML = "";
-
     let total = 0;
-
     carrinho.forEach((item, index) => {
-
         const subtotal = item.preco * item.qtd;
         total += subtotal;
-
         const div = document.createElement("div");
-
         div.innerHTML = `
             <div>
                 <strong>${item.nome}</strong><br>
@@ -292,11 +269,9 @@ function atualizarCarrinho() {
                 <button onclick="aumentar(${index})">+</button>
             </div>
         `;
-
         lista.appendChild(div);
     });
-
-    totalEl.innerText = `Total: R$ ${total.toFixed(2)}`;
+    if (totalEl) totalEl.innerText = `Total: R$ ${total.toFixed(2)}`;
 }
 
 window.aumentar = function(i) {
@@ -313,43 +288,41 @@ window.diminuir = function(i) {
 };
 
 window.abrirCarrinho = function() {
-    document.getElementById("modalCarrinho").style.display = "flex";
+    const modal = document.getElementById("modalCarrinho");
+    if (modal) modal.style.display = "flex";
 };
 
 window.fecharCarrinho = function() {
-    document.getElementById("modalCarrinho").style.display = "none";
+    const modal = document.getElementById("modalCarrinho");
+    if (modal) modal.style.display = "none";
 };
 
 window.finalizarPedido = function() {
     if (carrinho.length === 0) return alert("Carrinho vazio");
-    document.getElementById("modalFinalizacao").style.display = "flex";
+    const modal = document.getElementById("modalFinalizacao");
+    if (modal) modal.style.display = "flex";
 };
 
 window.fecharFinalizacao = function() {
-    document.getElementById("modalFinalizacao").style.display = "none";
+    const modal = document.getElementById("modalFinalizacao");
+    if (modal) modal.style.display = "none";
 };
 
 window.enviarPedidoWhatsApp = async function() {
-    
     const nome = document.getElementById("nomeCliente").value;
     const endereco = document.getElementById("enderecoCliente").value;
-    
     if (!nome || !endereco) {
         alert("Preencha os campos");
         return;
     }
-    
     let msg = `*Pedido - Tia Linda*%0A%0A`;
-    
     carrinho.forEach(i => {
         msg += `• ${i.nome} x${i.qtd}%0A`;
         i.adicionais.forEach(a => {
             msg += `   ${a}%0A`;
         });
     });
-    
     try {
-        
         const pedidoRef = await addDoc(collection(db, "pedidos"), {
             cliente: nome,
             endereco: endereco,
@@ -358,88 +331,35 @@ window.enviarPedidoWhatsApp = async function() {
             status: "recebido",
             timestamp: serverTimestamp()
         });
-        
         const pedidoId = pedidoRef.id;
-        
-        // 🔹 Envia para WhatsApp
         window.open(`https://wa.me/5541987276769?text=${msg}`, "_blank");
-        
-        // 🔹 Fecha modais
         document.getElementById("modalFinalizacao").style.display = "none";
         document.getElementById("modalCarrinho").style.display = "none";
-        
-        // 🔹 Limpa carrinho
         carrinho = [];
         atualizarCarrinho();
         atualizarBadge();
-        
-        // 🔹 Mostra acompanhamento
         mostrarAcompanhamentoPedido();
-        
-        // 🔹 Escuta atualização de status (VERSÃO CORRIGIDA)
-onSnapshot(doc(db, "pedidos", pedidoId), (docSnap) => {
-    if (!docSnap.exists()) return;
-    
-    let status = docSnap.data().status || "";
-    
-    // 🔹 Normaliza status (resolve maiúscula/minúscula)
-    status = status.toString().toLowerCase().trim();
-    
-    console.log("Status atualizado:", status);
-    
-    // 🔹 Remove todos ativos
-    document.querySelectorAll(".status-item")
-        .forEach(el => el.classList.remove("ativo"));
-    
-    // 🔹 Ativa conforme status
-    if (status === "recebido") {
-        document.getElementById("status-recebido")?.classList.add("ativo");
-    }
-    
-    if (status === "andamento") {
-        document.getElementById("status-andamento")?.classList.add("ativo");
-    }
-    
-    if (status === "enviado") {
-        document.getElementById("status-enviado")?.classList.add("ativo");
-    }
-    
-    if (status === "concluido" || status === "concluído") {
-        document.getElementById("status-concluido")?.classList.add("ativo");
-    }
-});
-        
+
+        onSnapshot(doc(db, "pedidos", pedidoId), (docSnap) => {
+            if (!docSnap.exists()) return;
+            let status = docSnap.data().status || "";
+            status = status.toString().toLowerCase().trim();
+            document.querySelectorAll(".status-item").forEach(el => el.classList.remove("ativo"));
+            if (status === "recebido") document.getElementById("status-recebido")?.classList.add("ativo");
+            if (status === "andamento") document.getElementById("status-andamento")?.classList.add("ativo");
+            if (status === "enviado") document.getElementById("status-enviado")?.classList.add("ativo");
+            if (status === "concluido" || status === "concluído") document.getElementById("status-concluido")?.classList.add("ativo");
+        });
     } catch (erro) {
         console.error("Erro ao salvar pedido:", erro);
         alert("Erro ao enviar pedido.");
     }
-};function mostrarDebugCategorias() {
-    const debug = document.getElementById("debugCategorias");
-    if (!debug) return;
-    
-    const categoriasUnicas = [...new Set(produtos.map(p => p.categoria))];
-    
-    debug.innerHTML = "<strong>Categorias encontradas no Firebase:</strong><br>";
-    
-    categoriasUnicas.forEach(cat => {
-        debug.innerHTML += cat + "<br>";
-    });
-}
-
-// chama depois que carregar
-setTimeout(() => {
-    mostrarDebugCategorias();
-}, 2000);
-/* ======================================
-   ADICIONAIS - CONTROLE
-====================================== */
+};
 
 window.toggleAdicionalGlobal = function(index) {
     const adicional = produtoSelecionado.adicionaisGlobais[index];
     if (!adicional) return;
-    
     const jaExiste = adicionaisSelecionados.find(a => a.id === adicional.id);
-    
     if (jaExiste) {
         adicionaisSelecionados = adicionaisSelecionados.filter(a => a.id !== adicional.id);
         valorAtualProduto -= parseFloat(adicional.preco || 0);
@@ -447,35 +367,33 @@ window.toggleAdicionalGlobal = function(index) {
         adicionaisSelecionados.push(adicional);
         valorAtualProduto += parseFloat(adicional.preco || 0);
     }
-    
     atualizarBotaoConfirmar();
 };
 
 function atualizarBotaoConfirmar() {
     const btn = document.getElementById("btnConfirmar");
     if (!btn) return;
-    
     btn.innerText = `Adicionar ao Carrinho • R$ ${valorAtualProduto.toFixed(2)}`;
 }
 
 window.confirmarAdicionais = function() {
-    
     carrinho.push({
         nome: produtoSelecionado.nome,
         preco: valorAtualProduto,
         qtd: 1,
         adicionais: adicionaisSelecionados.map(a => `+ ${a.nome}`)
     });
-    
     atualizarCarrinho();
     atualizarBadge();
-    
     document.getElementById("modalAdicionais").style.display = "none";
 };
+
 function mostrarAcompanhamentoPedido() {
-    document.getElementById("modalStatus").style.display = "flex";
+    const modal = document.getElementById("modalStatus");
+    if (modal) modal.style.display = "flex";
 }
 
 window.fecharStatus = function() {
-    document.getElementById("modalStatus").style.display = "none";
+    const modal = document.getElementById("modalStatus");
+    if (modal) modal.style.display = "none";
 };
